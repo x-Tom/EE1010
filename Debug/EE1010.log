@@ -1,26 +1,39 @@
 ﻿  main.cpp
-C:\Users\tomde\Development\C++\EE1010\main.cpp(73,37): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\tomde\Development\C++\EE1010\main.cpp(137,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(139,44): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\tomde\Development\C++\EE1010\main.cpp(258,41): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(258,32): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(258,26): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(258,20): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(261,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(262,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(263,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(263,23): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(263,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(263,15): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(279,13): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(279,21): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(281,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(282,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(284,37): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(284,54): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(451,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\tomde\Development\C++\EE1010\main.cpp(485,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\tomde\Development\C++\EE1010\main.cpp(496,63): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(496,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tomde\Development\C++\EE1010\main.cpp(530,38): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(83,36): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\tomde\Development\C++\EE1010\main.cpp(107,21): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\tomde\Development\C++\EE1010\main.cpp(108,21): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\tomde\Development\C++\EE1010\main.cpp(109,19): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\tomde\Development\C++\EE1010\main.cpp(110,19): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\tomde\Development\C++\EE1010\main.cpp(111,37): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\tomde\Development\C++\EE1010\main.cpp(203,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(208,44): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\tomde\Development\C++\EE1010\main.cpp(216,54): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\tomde\Development\C++\EE1010\main.cpp(346,41): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(346,32): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(346,26): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(346,20): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(349,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(350,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(351,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(351,23): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(351,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(351,15): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(367,13): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(367,21): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(369,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(370,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(372,37): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(372,54): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(569,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\tomde\Development\C++\EE1010\main.cpp(604,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\tomde\Development\C++\EE1010\main.cpp(615,63): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(615,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(649,38): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(728,41): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(728,32): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(728,26): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(728,20): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(754,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\tomde\Development\C++\EE1010\main.cpp(767,33): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\tomde\Development\C++\EE1010\main.cpp(812,23): warning C4018: '<': signed/unsigned mismatch
   EE1010.vcxproj -> C:\Users\tomde\Development\C++\EE1010\Debug\EE1010.exe

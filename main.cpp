@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <iterator>
 #include <vector>
@@ -17,6 +18,10 @@ const int HEIGHT = 144;
 bool GAME_MENU = false;
 bool GAME_START = false;
 bool GAME_OPTIONS = false;
+int ROUND = 1;
+//std::fstream FHROUND;
+//int HROUND;
+bool NEW_ROUND = true;
 
 enum PIXEL {
     FULL_SHADE = 0x2588,
@@ -24,6 +29,10 @@ enum PIXEL {
     MEDIUM_SHADE = 0x2592,
     LIGHT_SHADE = 0x2591
 };
+
+template <typename entity1, typename entity2>
+bool entityBounds(entity1* e1, entity2* e2);
+
 
 struct projectile_t {
     float x;
@@ -33,6 +42,7 @@ struct projectile_t {
     float vy = 1;
     float size = 1;
     bool exists = true;
+    void* creator = nullptr;
     wchar_t pixel = PIXEL::FULL_SHADE;
 };
 
@@ -70,14 +80,62 @@ struct player_t {
     float angle;
     float vx;
     float vy;
-    float angle_differential = 0.005;
+    float angle_differential = 0.01;
     float size = 10;
+
+    bool alive = true;
+    float hp = 100;
+    float dmg = 1;
+
+    int kill_count = 0;
+
     //consoleSprite* sprite;
     //void (*shoot)(std::vector<projectile_t*>*,float,float,float);
-    void shoot(std::vector<projectile_t*>* projList, projectile_t* (*createProjectile)(float x, float y, float angle)) {
-        projList->push_back(createProjectile(this->x + this->size / 2, this->y + this->size / 2, this->angle));
+    void shoot(std::vector<projectile_t*>* projList, projectile_t* (*createProjectile)(float x, float y, float angle, void* creator)) {
+        projList->push_back(createProjectile(this->x + this->size / 2, this->y + this->size / 2, this->angle, this));
     };
+
+    
+
+
 };
+
+struct enemy_t {
+    float x = 50;
+    float y = 50;
+    float angle = 0;
+    float spdx = 0.1;
+    float spdy = 0.1;
+    float vx = 0.1;
+    float vy = 0.1;
+    float angle_differential = 0.005;
+    float size = 8;
+    bool alive = true;
+    float hp = 100;
+    float dmg = 0.5;
+    
+
+    void melee(player_t* target) {
+
+        if (entityBounds<enemy_t, player_t>(this, target)) target->hp -= this->dmg;
+        
+    };
+
+    void pCollisions(projectile_t* bullet) {
+        if (entityBounds<enemy_t, projectile_t>(this, bullet)) {
+            bullet->exists = false;
+            this->hp -= ((player_t*)bullet->creator)->dmg;
+            if (this->hp <= 0) {
+                this->alive = false;
+                ((player_t*)bullet->creator)->kill_count++;
+            }
+
+        };
+    };
+
+
+};
+
 
 
 struct menuComponent_t {
@@ -117,7 +175,7 @@ void noise(wchar_t*, clock_t*, clock_t, bool*);
 void drawPixelCharacter(wchar_t*, int, int, float, wchar_t, wchar_t);
 void drawPixelText(wchar_t*, int, int, float, std::wstring, wchar_t);
 void drawPixelCharacterSet(wchar_t*, wchar_t);
-projectile_t* createProjectile(float x, float y, float angle);
+projectile_t* createProjectile(float, float, float, void*);
 void updateProjectile(projectile_t*);
 void updateProjectilesVec(std::vector<projectile_t*>*);
 void drawProjectile(wchar_t*, projectile_t*);
@@ -128,6 +186,14 @@ void handleInput(player_t*, std::vector<projectile_t*>*);
 void menuControls(menu_t*);
 void optionsControls(wchar_t*);
 void returnControls();
+enemy_t* createEnemy(float, float);
+void drawEnemy(enemy_t*, wchar_t*);
+void drawEnemiesVec(std::vector<enemy_t*>*, wchar_t*);
+void updateEnemy(enemy_t*, player_t*, std::vector<projectile_t*>*);
+void updateEnemiesVec(std::vector<enemy_t*>*, player_t*, std::vector<projectile_t*>*);
+void initEnemiesVec(std::vector<enemy_t*>*);
+void drawHUD(wchar_t*, player_t*);
+void gameOver(wchar_t*, player_t*);
 
 
 
@@ -136,12 +202,18 @@ int main(){
     
     srand(time(NULL));
 
-    player_t player1 = {20, 20, 0, 0.1, 0.1};
+    //FHROUND.open("highscore/*.*/txt");
+
+
+    player_t player1 = {20, 20, 0, 0.2, 0.2};
     /*player1.shoot = [](std::vector<projectile_t*>* entityList, float x, float y, float angle) {
         entityList->push_back(createProjectile(x, y, angle));
     };*/
     menu_t menu;
     std::vector<projectile_t*> projectiles;
+    std::vector<enemy_t*> enemies;
+
+    enemy_t enemy1 = { 50, 50, 0, 0.1, 0.1, 0.1, 0.1 };
 
     menu.title.pixel_type = PIXEL::FULL_SHADE;
     menu.title.pixel_default = menu.title.pixel_type;
@@ -205,14 +277,29 @@ int main(){
         }
         if (GAME_START) {
             clearScreen(screen);
+            
             drawPlayer(&player1, screen);
+            if (NEW_ROUND) initEnemiesVec(&enemies);
+            /*drawEnemy(&enemy1, screen);
+            updateEnemy(&enemy1, &player1);*/
+            drawEnemiesVec(&enemies, screen);
+            updateEnemiesVec(&enemies, &player1, &projectiles);
+
             handleInput(&player1, &projectiles);
             updateProjectilesVec(&projectiles);
             drawProjectilesVec(screen, &projectiles);
             returnControls();
             //line(screen, 20, 20, 30, 24, PIXEL::FULL_SHADE);
 
+            drawHUD(screen, &player1);
+
+            if (!player1.alive) {
+                //gameOver(screen, &player1);
+                return 0;
+            }
+
         }
+        
         
 
         //drawPixelCharacter(screen, 20, 20, 2, 'B', PIXEL::DARK_SHADE);
@@ -255,6 +342,7 @@ void draw(wchar_t* buf, int x, int y, wchar_t c){
 }
 
 void drawPlayer(player_t* p, wchar_t* buf){
+    if (!p->alive) return;
     fillRect(buf, p->x, p->y, p->size, p->size, PIXEL::FULL_SHADE);
     float x1 = p->x + p->size / 2;
     float y1 = p->y + p->size / 2;
@@ -350,6 +438,36 @@ void noise(wchar_t* buf, clock_t* startTime, clock_t duration, bool* finishedFla
 void drawPixelCharacter(wchar_t* buf, int x, int y, float scale, wchar_t c, wchar_t pix) { // x and y are top left corner of character
     int l[10][10]; //BCDEGIMNORSZ
     switch (c) {
+    case '0':
+        std::copy(&CHARACTER::ZERO[0][0], &CHARACTER::ZERO[0][0] + 100, &l[0][0]);
+        break;
+    case '1':
+        std::copy(&CHARACTER::ONE[0][0], &CHARACTER::ONE[0][0] + 100, &l[0][0]);
+        break;
+    case '2':
+        std::copy(&CHARACTER::TWO[0][0], &CHARACTER::TWO[0][0] + 100, &l[0][0]);
+        break;
+    case '3':
+        std::copy(&CHARACTER::THREE[0][0], &CHARACTER::THREE[0][0] + 100, &l[0][0]);
+        break;
+    case '4':
+        std::copy(&CHARACTER::FOUR[0][0], &CHARACTER::FOUR[0][0] + 100, &l[0][0]);
+        break;
+    case '5':
+        std::copy(&CHARACTER::FIVE[0][0], &CHARACTER::FIVE[0][0] + 100, &l[0][0]);
+        break;
+    case '6':
+        std::copy(&CHARACTER::SIX[0][0], &CHARACTER::SIX[0][0] + 100, &l[0][0]);
+        break;
+    case '7':
+        std::copy(&CHARACTER::SEVEN[0][0], &CHARACTER::SEVEN[0][0] + 100, &l[0][0]);
+        break;
+    case '8':
+        std::copy(&CHARACTER::EIGHT[0][0], &CHARACTER::EIGHT[0][0] + 100, &l[0][0]);
+        break;
+    case '9':
+        std::copy(&CHARACTER::NINE[0][0], &CHARACTER::NINE[0][0] + 100, &l[0][0]);
+        break;
     case 'A':
         std::copy(&CHARACTER::A[0][0], &CHARACTER::A[0][0] + 100, &l[0][0]);
         break;
@@ -457,12 +575,13 @@ void drawPixelCharacterSet(wchar_t* buf, wchar_t c) {
     drawPixelText(buf, 10, 50, 2, L">", c);
 }
 
-projectile_t* createProjectile(float x, float y, float angle)
+projectile_t* createProjectile(float x, float y, float angle, void* creator = nullptr)
 {
     projectile_t* projectile = new projectile_t;
     projectile->x = x;
     projectile->y = y;
     projectile->angle = angle;
+    projectile->creator = creator;
     return projectile;
 }
 
@@ -530,12 +649,16 @@ void handleInput(player_t* p, std::vector<projectile_t*>* p_list){
         p->angle += 0.02*sin(clock());
     }
 
+    if (p->hp <= 0) {
+        p->hp = 0;
+        p->alive = false;
+    };
 
 }
 
 void menuControls(menu_t* menu){
 
-    if (GetAsyncKeyState(VK_UP) & 0x8000 && !(GetAsyncKeyState(VK_UP) & 0x0001)) {
+    /*if (GetAsyncKeyState(VK_UP) & 0x8000 && !(GetAsyncKeyState(VK_UP) & 0x0001)) {
         (menu->options.selected) ? menu->options.selected = false : menu->options.selected = true;
         (menu->play.selected) ? menu->play.selected = false : menu->play.selected = true;
     }
@@ -543,6 +666,16 @@ void menuControls(menu_t* menu){
     if (GetAsyncKeyState(VK_DOWN) & 0x8000 && !(GetAsyncKeyState(VK_DOWN) & 0x0001)) {
         (menu->play.selected) ? menu->play.selected = false : menu->play.selected = true;
         (menu->options.selected) ? menu->options.selected = false : menu->options.selected = true;
+    }*/
+
+    if (GetAsyncKeyState(VK_UP) & 0x8000 && !(GetAsyncKeyState(VK_UP) & 0x0001)) {
+        menu->play.selected = true;
+        menu->options.selected = false;
+    }
+
+    if (GetAsyncKeyState(VK_DOWN) & 0x8000 && !(GetAsyncKeyState(VK_DOWN) & 0x0001)) {
+        menu->play.selected = false;
+        menu->options.selected = true;
     }
    
     (menu->options.selected) ? menu->options.highlighted = true : menu->options.highlighted = false;
@@ -583,9 +716,122 @@ void returnControls(){
 
 }
 
+enemy_t* createEnemy(float x, float y)
+{
+    enemy_t* e = new enemy_t;
+    e->x = x + (rand() % 30) - 15;
+    e->y = y + (rand() % 30) - 15;
+    return e;
+}
+
+void drawEnemy(enemy_t* p, wchar_t* buf){
+    fillRect(buf, p->x, p->y, p->size, p->size, PIXEL::DARK_SHADE);
+}
+
+void drawEnemiesVec(std::vector<enemy_t*>* e_list, wchar_t* buf){
+    for (std::vector<enemy_t*>::iterator i = e_list->begin(); i != e_list->end(); ++i) drawEnemy(*i, buf);
+}
+
+
+void updateEnemy(enemy_t* e, player_t* p, std::vector<projectile_t*>* p_list) {
+    //static const float e_vx_intial = e->vx;
+    //static const float e_vy_intial = e->vy;
+
+
+    float dx = p->x - e->x;
+    float dy = p->y - e->y;
+
+    e->angle = atan2(dy, dx);
+
+    e->vx = e->spdx * cos(e->angle);
+    e->vy = e->spdy * sin(e->angle);
+
+    e->x += e->vx;
+    e->y += e->vy;
+
+    e->melee(p);
+    
+    for (int i = 0; i < p_list->size(); i++) {
+        e->pCollisions((*p_list)[i]);
+    }
+    
+    //e->pCollisions();
+
+}
+
+
+
+void initEnemiesVec(std::vector<enemy_t*>* e_list){
+    for (int i = 0; i < 5 * ROUND; i++) {
+        enemy_t* e = createEnemy(50, 50);
+        e->spdx = e->spdy = 0.1 + (ROUND / 100);
+        e_list->push_back(e);
+    }
+    NEW_ROUND = false;
+}
+
+void drawHUD(wchar_t* buf, player_t* p){
+    std::wstring kills = L"KILLS " + std::to_wstring(p->kill_count);
+    drawPixelText(buf, WIDTH - 100, 10, 1, kills, PIXEL::FULL_SHADE);
+    std::wstring hp = L"HP " + std::to_wstring((int)p->hp);
+    drawPixelText(buf, WIDTH - 100, 30, 1, hp, PIXEL::FULL_SHADE);
+    std::wstring round = L"ROUND " + std::to_wstring(ROUND);
+    drawPixelText(buf, WIDTH - 100, 50, 1, round, PIXEL::FULL_SHADE);
+
+}
+
+void gameOver(wchar_t* buf, player_t* p){
+    std::wstring rounds = L"YOU LASTED " + std::to_wstring(ROUND) + L"ROUNDS";
+    drawPixelText(buf, WIDTH/2 - 100, 10, 1, rounds, PIXEL::FULL_SHADE);
+    std::wstring kills = L"YOU KILLED " + std::to_wstring(ROUND) + L"ZOMBIES";
+    drawPixelText(buf, WIDTH / 2 - 100, 30, 1, kills, PIXEL::FULL_SHADE);
+    /*std::wstring highest_round = L"YOU LASTED " + std::to_wstring(ROUND) + L"ROUNDS";
+    drawPixelText(buf, WIDTH / 2 - 100, 10, 1, rounds, PIXEL::FULL_SHADE);*/
+    
+    ////if (FHROUND.peek() == std::ifstream::traits_type::eof()) ;
+    //std::string str;
+    //while (!FHROUND.eof){ // To get you all the lines.
+    //   getline(FHROUND, str); // Saves the line in STRING.
+    //}
+    // 
+    //int hround = std::stoi(str);
+
+    //if (hround > ROUND) {
+    //    FHROUND 
+    //}
+
+}
+
+void updateEnemiesVec(std::vector<enemy_t*>* p_list, player_t* p, std::vector<projectile_t*>* projList){
+    
+    if (!p_list->size()) {
+        ROUND++;
+        NEW_ROUND = true;
+    }
+    
+    for (int i = 0; i < p_list->size(); i++) {
+        if ((*p_list)[i]->alive) updateEnemy((*p_list)[i], p, projList);
+        else {
+            delete ((*p_list)[i]);
+            p_list->erase(p_list->begin() + i);
+        }
+    }
+}
+
 /*draw(screen, WIDTH - 7, 0, L'E');
         draw(screen, WIDTH - 6, 0, L'E');
         draw(screen, WIDTH - 5, 0, L'1');
         draw(screen, WIDTH - 4, 0, L'0');
         draw(screen, WIDTH - 3, 0, L'1');
         draw(screen, WIDTH - 2, 0, L'0');*/
+
+template<typename entity1, typename entity2>
+bool entityBounds(entity1* e1, entity2* e2){
+    float pLeft = e1->x, tLeft = e2->x;
+    float pRight = e1->x + e1->size, tRight = e2->x + e2->size;
+    float pTop = e1->y, tTop = e2->y;
+    float pBottom = e1->y + e1->size, tBottom = e2->y + e2->size;
+
+    return (((pLeft <= tRight && pRight >= tLeft) || (tLeft <= pRight && tRight >= pLeft)) && ((pTop <= tBottom && pBottom >= tTop) || (pTop <= tBottom && pBottom >= tTop)));
+
+}
